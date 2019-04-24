@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import Routes from '../../../router';
-import {Layout, Badge, Menu, Icon, Spin, Tooltip} from 'antd';
+import {Layout, Badge, Menu, Icon, Spin} from 'antd';
 import SiderMenu from '../SiderMenu/index';
 
-import store, {UpdateSystemWidth, UpdateSystemHeight, UpdateUserInfo, UpdateLoadingHttp} from '../../../store/index';
+import store, {UpdateSystemWidth, UpdateSystemHeight, UpdateUserInfo} from '../../../store/index';
 import '../Index/style.less';
 import './index.less';
 import 'braft-editor/dist/index.css';
@@ -191,23 +191,15 @@ class Admin extends Component {
       icon: 'compass',
     });
 
+    menus.push({
+      title: '键帽高度',
+      key: '/height',
+      icon: 'compass',
+    });
+
     obj.menus = menus;
 
     this.setState(obj);
-  };
-
-  toChangMerchant = () => {
-
-    window.$cookie.remove('id');
-    window.location.href = '/app/dashboard';
-    //
-    // this.toFindAdmin();
-    //
-    // let path = {
-    //   pathname: '/app/dashboard',
-    // };
-    //
-    // this.props.history.push(path)
   };
 
   toLogout = () => {
@@ -266,11 +258,6 @@ class Admin extends Component {
                 mode="horizontal"
                 onClick={this.toClickMenu}
               >
-                <Menu.Item key="merchant">
-                  <Tooltip title="切换总商户">
-                    <Icon type="logout"/>
-                  </Tooltip>
-                </Menu.Item>
                 <Menu.Item key="2">
                   <Badge count={5} overflowCount={9} style={{marginLeft: 10}}>
                     <Icon type="notification"/>

@@ -13,6 +13,10 @@ export default {
       key: "/keycap/edit",
       component: 'KeycapEditor',
     },
+    {
+      key: "/height",
+      component: 'AppHeight',
+    },
   ],
   others: [
     // {

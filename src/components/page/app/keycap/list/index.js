@@ -21,7 +21,7 @@ class KeycapList extends Component {
   }
 
   componentWillMount() {
-    this.toGet();
+    // this.toGet();
   };
 
   toOpenCreate() {
