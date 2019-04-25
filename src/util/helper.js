@@ -106,8 +106,8 @@ window.$upload = 'https://app.panguoyun.com/api/';
 window.$picture = window.$upload + 'v1/upload/picture';
 
 window.$layout = {
-  labelCol: {span: 7},
-  wrapperCol: {span: 17},
+  labelCol: {span: 5},
+  wrapperCol: {span: 19},
 };
 
 window.$layoutSetting = {

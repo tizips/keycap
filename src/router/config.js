@@ -1,4 +1,7 @@
 
+// import {lazy} from 'react';
+// import LazyLoad from '../optimization/lazyLoad';
+
 export default {
   menus: [ // 菜单相关路由
     {
@@ -15,7 +18,11 @@ export default {
     },
     {
       key: "/height",
-      component: 'AppHeight',
+      component: "AppHeight",
+    },
+    {
+      key: "/admin",
+      component: "AppAdmin",
     },
   ],
   others: [

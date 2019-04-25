@@ -173,6 +173,17 @@ class KeycapList extends Component {
       }
     ];
 
+    let obj = this.state;
+
+    obj.basic.height = store.getState().system.height;
+
+    if (obj.basic.height !== store.getState().system.height) {
+
+      obj.basic.height = store.getState().system.height;
+
+      this.setState(obj);
+    }
+
     store.subscribe(() => {
 
       let obj = this.state;
@@ -190,6 +201,7 @@ class KeycapList extends Component {
       <div>
         <Table columns={columns} dataSource={this.state.data.table}
                style={{height: this.state.basic.height - 180 + 'px'}}
+               className="table-content"
                pagination={false}/>
         <div className="table-bottom">
           <div className="table-bottom-left">

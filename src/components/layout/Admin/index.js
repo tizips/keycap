@@ -17,8 +17,8 @@ class Admin extends Component {
     collapsed: false,
   };
 
-  constructor(props) {
-    super(props);
+  constructor(prop) {
+    super(prop);
 
     this.state = {
       collapsed: false,
@@ -194,6 +194,12 @@ class Admin extends Component {
     menus.push({
       title: '键帽高度',
       key: '/height',
+      icon: 'compass',
+    });
+
+    menus.push({
+      title: '管理员',
+      key: '/admin',
       icon: 'compass',
     });
 

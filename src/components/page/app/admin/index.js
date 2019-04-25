@@ -6,7 +6,7 @@ import './style.less';
 const {TextArea} = Input;
 const {Option} = Select;
 
-class AppHeight extends Component {
+class AppAdmin extends Component {
 
   constructor(props) {
     super(props);
@@ -289,6 +289,7 @@ class AppHeight extends Component {
       }
     ];
 
+
     let obj = this.state;
 
     obj.basic.height = store.getState().system.height;
@@ -392,6 +393,6 @@ class AppHeight extends Component {
   }
 }
 
-AppHeight = Form.create()(AppHeight);
+AppAdmin = Form.create()(AppAdmin);
 
-export default AppHeight;
+export default AppAdmin;

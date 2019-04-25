@@ -57,6 +57,7 @@
     "url-loader": "1.1.2",
     "url-search-params": "^1.1.0",
     "webpack": "4.28.3",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-dev-server": "3.1.14",
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "3.6.3"
@@ -72,7 +73,7 @@
   "browserslist": [
     ">0.2%",
     "not dead",
-    "not ie <= 11",
+    "not ie <= 9",
     "not op_mini all"
   ],
   "jest": {
@@ -123,6 +124,19 @@
   "babel": {
     "presets": [
       "react-app"
+    ],
+    "plugins": [
+      [
+        "import",
+        {
+          "libraryName": "antd",
+          "libraryDirectory": "es",
+          "style": "css"
+        }
+      ]
     ]
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.11.0"
   }
 }

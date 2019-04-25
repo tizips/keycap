@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, Card, Collapse, Form, Input, Row, Col, Select, Tabs, Icon, Upload} from 'antd';
+import {Button, Card, Collapse, Form, Input, Row, Col, Select, Slider, Tabs, Icon, Upload} from 'antd';
 import BraftEditor from 'braft-editor';
 import './style.less';
 
@@ -24,20 +24,24 @@ class KeycapEditor extends Component {
       form: {
         pictures: [],
         name: '',
-        tel: '',
         status: '',
+        hot: '',
         summary: '',
+        no: 50,
         content: '',
-        position: '',
-        lng: 0,
-        lat: 0,
-        aid: '',
+        hid: [],
+        aid: [],
+        sid: [],
       },
       other: {
         editor: BraftEditor.createEditorState(null),
         pictures: [],
-        date: [],
-        areas: [],
+        heights: [
+          {
+            hid: 1,
+            name: 'demo',
+          }
+        ],
       }
     }
   }
@@ -297,7 +301,7 @@ class KeycapEditor extends Component {
                         accepts: {video: false, audio: false,},
                         externals: {image: false, video: false, audio: false, embed: false,}
                       }}
-                      placeholder="请输入正文内容"
+                      placeholder="商品详情内容不能为空"
                     />
                   )}
                 </Form.Item>
@@ -326,35 +330,23 @@ class KeycapEditor extends Component {
                   </Panel>
                   <Panel header="基本信息" key="basic">
                     <Form.Item {...window.$layout}
-                               label="商户名称"
+                               label="名称"
                     >
                       {getFieldDecorator('name', {
                         initialValue: this.state.form.name,
                         rules: [{
-                          required: true, message: '商户名称不能为空',
+                          required: true, message: '商品名称不能为空',
                         }],
                       })(
                         <Input autoComplete="off"/>
                       )}
                     </Form.Item>
-                    <Form.Item {...window.$layout}
-                               label="联系电话"
-                    >
-                      {getFieldDecorator('tel', {
-                        initialValue: this.state.form.tel,
-                        rules: [{
-                          required: true, message: '联系电话不能为空',
-                        }],
-                      })(
-                        <Input autoComplete="off"/>
-                      )}
-                    </Form.Item>
-                    <Form.Item {...window.$layout} label="商户状态"
+                    <Form.Item {...window.$layout} label="状态"
                     >
                       {getFieldDecorator('status', {
                         initialValue: this.state.form.status === '' ? 'OPEN' : this.state.form.status,
                         rules: [{
-                          required: true, message: '商户类型不能为空!',
+                          required: true, message: '商品状态不能为空!',
                         }],
                       })(
                         <Select>
@@ -363,7 +355,21 @@ class KeycapEditor extends Component {
                         </Select>
                       )}
                     </Form.Item>
-                    <Form.Item
+                    <Form.Item {...window.$layout} label="热卖"
+                    >
+                      {getFieldDecorator('hot', {
+                        initialValue: this.state.form.hot === '' ? 'OPEN' : this.state.form.status,
+                        rules: [{
+                          required: true, message: '商户属性不能为空!',
+                        }],
+                      })(
+                        <Select>
+                          <Option value="OPEN">开启</Option>
+                          <Option value="CLOSE">关闭</Option>
+                        </Select>
+                      )}
+                    </Form.Item>
+                    <Form.Item {...window.$layout} label="简介"
                     >
                       {getFieldDecorator('summary', {
                         initialValue: this.state.form.summary,
@@ -374,40 +380,69 @@ class KeycapEditor extends Component {
                         <TextArea rows={3} placeholder='请输入商户简介'/>
                       )}
                     </Form.Item>
+                    <Form.Item {...window.$layout} label="排序"
+                    >
+                      {getFieldDecorator('no', {
+                        initialValue: 50,
+                        rules: [{
+                          required: true, message: '商户序号不能为空!',
+                        }],
+                      })(
+                        <Slider min={1} max={99}/>
+                      )}
+                    </Form.Item>
                     <Form.Item>
                       <Button type="primary" htmlType="submit" block>{this.state.basic.button}</Button>
                     </Form.Item>
                   </Panel>
-                  <Panel header="位置信息" key="position">
-                    <Form.Item {...window.$layout} label="所属地区"
+                  <Panel header="可售属性" key="position">
+                    <Form.Item {...window.$layout} label="高度"
                     >
-                      {getFieldDecorator('aid', {
-                        initialValue: this.state.form.aid === '' ? '' : this.state.form.aid,
+                      {getFieldDecorator('hid', {
+                        initialValue: this.state.form.hid === '' ? '' : this.state.form.hid,
                         rules: [{
-                          required: true, message: '子商户所属地区不能为空!',
+                          required: true, message: '可售高度不能为空!',
                         }],
                       })(
                         <Select>
                           {
-                            this.state.other.areas.map((item) => {
+                            this.state.other.heights.map((item) => {
                               return (
-                                <Option key={item.aid} value={item.aid}>{item.name}</Option>
+                                <Option key={item.hid} value={item.hid}>{item.name}</Option>
                               )
                             })
                           }
                         </Select>
                       )}
                     </Form.Item>
-                    <Form.Item {...window.$layout}
-                               label="详细地址"
+                    <Form.Item {...window.$layout} label="分区"
                     >
-                      {getFieldDecorator('position', {
-                        initialValue: this.state.form.position,
+                      {getFieldDecorator('aid', {
+                        initialValue: this.state.form.aid === '' ? '' : this.state.form.aid,
                         rules: [{
-                          required: true, message: '详细位置不能为空',
+                          required: true, message: '可售分区不能为空!',
                         }],
                       })(
-                        <TextArea rows={3} placeholder='请输入商户详细位置信息'/>
+                        <Select mode="multiple">
+                          <Option key={1} value={1}>字母</Option>
+                          <Option key={2} value={2}>功能</Option>
+                          <Option key={3} value={3}>数字</Option>
+                        </Select>
+                      )}
+                    </Form.Item>
+                    <Form.Item {...window.$layout} label="刻度"
+                    >
+                      {getFieldDecorator('sid', {
+                        initialValue: this.state.form.sid === '' ? '' : this.state.form.sid,
+                        rules: [{
+                          required: true, message: '可售刻度不能为空!',
+                        }],
+                      })(
+                        <Select mode="multiple">
+                          <Option key={1} value={1}>正刻</Option>
+                          <Option key={2} value={2}>侧刻</Option>
+                          <Option key={3} value={3}>无刻</Option>
+                        </Select>
                       )}
                     </Form.Item>
                   </Panel>
