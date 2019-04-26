@@ -1,7 +1,9 @@
 import axios from 'axios';
 import store, {UpdateLoadingHttp} from '../store';
 
-axios.defaults.baseURL = "https://app.panguoyun.com/api/";
+
+
+axios.defaults.baseURL = window.$uri;
 // axios.defaults.withCredentials = true;
 
 axios.interceptors.request.use(function (config) {

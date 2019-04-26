@@ -24,9 +24,9 @@ class Admin extends Component {
       collapsed: false,
       user: {
         thumb: 'https://yezihaohao.github.io/css/images/avatar.jpg',
-        name: ''
+        nickname: ''
       },
-      openKey: '/app',
+      openKey: '/',
       firstHide: false,
       size: {
         width: 0,
@@ -39,12 +39,11 @@ class Admin extends Component {
       menus: [],
       role: {
         type: '',
-        right: [],
+        right: {
+          admin: null,
+          height: null,
+        },
       },
-      merchant: {
-        name: '',
-        type: '',
-      }
     };
   };
 
@@ -61,7 +60,7 @@ class Admin extends Component {
     const state = Admin.toSetMenuOpen(this.props);
     this.setState(state);
 
-    // this.toFindAdmin();
+    this.toFindAdmin();
 
     this.toOperateMenus();
   };
@@ -137,19 +136,19 @@ class Admin extends Component {
 
   toClickMenu = e => {
     if (e.key === 'merchant') {
-      this.toChangMerchant();
+      // this.toChangMerchant();
     }
   };
 
   toFindAdmin() {
 
-    if (this.state.user.name !== '') {
+    if (this.state.user.nickname !== '') {
       return;
     }
 
     let self = this;
 
-    window.$http.get('/v1/admins/admin/info')
+    window.$http.get('/v1/administer/admin/info')
       .then(function (response) {
 
         if (!response || response.data.status !== 0) {
@@ -158,12 +157,12 @@ class Admin extends Component {
 
         let obj = self.state;
 
-        obj.user.name = response.data.result.basic.name;
-        obj.user.thumb = response.data.result.basic.thumb;
+        obj.user.nickname = response.data.result.nickname;
+        obj.user.thumb = window.$uri + response.data.result.thumb;
         obj.role.type = response.data.result.role.type;
         obj.role.right = response.data.result.role.right;
-        obj.merchant.name = response.data.result.merchant.name;
-        obj.merchant.type = response.data.result.merchant.type;
+        // obj.merchant.name = response.data.result.merchant.name;
+        // obj.merchant.type = response.data.result.merchant.type;
 
         self.setState(obj);
         self.toOperateMenus();
@@ -185,23 +184,30 @@ class Admin extends Component {
     };
 
     menus.push(dashboard);
+
     menus.push({
       title: '键帽管理',
       key: '/keycap',
       icon: 'compass',
     });
 
-    menus.push({
-      title: '键帽高度',
-      key: '/height',
-      icon: 'compass',
-    });
+    if (this.state.role.right.height !== null) {
 
-    menus.push({
-      title: '管理员',
-      key: '/admin',
-      icon: 'compass',
-    });
+      menus.push({
+        title: '键帽高度',
+        key: '/height',
+        icon: 'compass',
+      });
+    }
+
+    if (this.state.role.right.admin !== null) {
+
+      menus.push({
+        title: '管理员',
+        key: '/admin',
+        icon: 'compass',
+      });
+    }
 
     obj.menus = menus;
 
@@ -272,7 +278,7 @@ class Admin extends Component {
                 <SubMenu
                   title={<span className="avatar"><img src={this.state.user.thumb} alt="头像"/><i
                     className="on bottom b-white"/></span>}>
-                  <Menu.Item key="avatar:name" className="avatar-list">你好 - {this.state.user.name}</Menu.Item>
+                  <Menu.Item key="avatar:name" className="avatar-list">你好 - {this.state.user.nickname}</Menu.Item>
                   <Menu.Item key="avatar:info">个人信息</Menu.Item>
                   <Menu.Item key="logout"><span onClick={this.toLogout}>退出登录</span></Menu.Item>
                 </SubMenu>

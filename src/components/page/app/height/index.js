@@ -34,14 +34,14 @@ class AppHeight extends Component {
   };
 
   componentWillMount() {
-    // this.toGet();
+    this.toGet();
   };
 
   toGet() {
 
     let self = this;
 
-    window.$http.get('/v1/admins/area')
+    window.$http.get('/v1/administer/height')
       .then(function (response) {
 
         if (!response || response.data.status !== 0 || response.data.result === null) {
@@ -55,7 +55,7 @@ class AppHeight extends Component {
 
           let item = {};
           item.key = i;
-          item.aid = value.aid;
+          item.hid = value.hid;
           item.name = value.name;
           item.summary = value.summary;
           item.no = value.no;
@@ -63,13 +63,13 @@ class AppHeight extends Component {
           item.time = value.time;
 
           switch (item.status) {
-            case 'CLOSE':
+            case 'U':
               item.toStatus = {
                 color: 'red',
                 blade: '下线',
               };
               break;
-            case 'OPEN':
+            case 'O':
               item.toStatus = {
                 color: 'green',
                 blade: '上线',
@@ -102,13 +102,13 @@ class AppHeight extends Component {
 
   toOpenCreate = () => {
 
-    this.toClearForm();
-
     let obj = this.state;
 
     obj.basic.form.show = true;
 
-    this.setState(obj);
+    this.setState(obj, () => {
+      obj.toClearForm();
+    });
   };
 
   toClearForm() {
@@ -117,7 +117,7 @@ class AppHeight extends Component {
 
     obj.form.name = '';
     obj.form.summary = '';
-    obj.form.status = 'OPEN';
+    obj.form.status = 'O';
     obj.form.no = 50;
 
     this.setState(obj);
@@ -129,7 +129,7 @@ class AppHeight extends Component {
 
     obj.basic.form.show = true;
     obj.basic.form.type = 'update';
-    obj.basic.form.id = record.aid;
+    obj.basic.form.id = record.hid;
 
     obj.form.name = record.name;
     obj.form.summary = record.summary;
@@ -160,7 +160,8 @@ class AppHeight extends Component {
         obj.form.name = values.name;
         obj.form.summary = values.summary;
         obj.form.status = values.status;
-        obj.form.no = parseInt(values.no);
+        // obj.form.no = parseInt(values.no);
+        obj.form.no = 0;
 
         this.setState(obj, () => {
           if (obj.basic.form.type === "update") {
@@ -176,13 +177,13 @@ class AppHeight extends Component {
   toCreate() {
 
     let self = this;
-    window.$http.post('/v1/admins/area', self.state.form)
+    window.$http.post('/v1/administer/height', self.state.form)
       .then(function (response) {
         if (!response || response.data.status !== 0) {
           return false;
         }
 
-        window.$message.success("地区信息添加成功");
+        window.$message.success("键帽高度信息添加成功");
 
         let obj = self.state;
 
@@ -195,13 +196,13 @@ class AppHeight extends Component {
 
   toUpdate() {
     let self = this;
-    window.$http.put('/v1/admins/area/' + self.state.basic.form.id, self.state.form)
+    window.$http.put('/v1/administer/height/' + self.state.basic.form.id, self.state.form)
       .then(function (response) {
         if (!response || response.data.status !== 0) {
           return false;
         }
 
-        window.$message.success("地区信息修改成功");
+        window.$message.success("键帽高度信息修改成功");
 
         let obj = self.state;
 
@@ -343,9 +344,9 @@ class AppHeight extends Component {
               {getFieldDecorator('name', {
                 initialValue: this.state.form.name,
                 rules: [{
-                  required: true, message: '地区名称不能为空',
+                  required: true, message: '高度名称不能为空',
                 }, {
-                  max: 20, message: '地区名称最多 20 个字'
+                  max: 20, message: '高度名称最多 20 个字'
                 }],
               })(
                 <Input autoComplete="off"/>
@@ -357,7 +358,7 @@ class AppHeight extends Component {
               {getFieldDecorator('summary', {
                 initialValue: this.state.form.summary,
                 rules: [{
-                  max: 240, message: '地区简介最多 240 个字',
+                  max: 240, message: '高度简介最多 240 个字',
                 }],
               })(
                 <TextArea rows={3}/>
@@ -366,14 +367,14 @@ class AppHeight extends Component {
             <Form.Item {...window.$layout} label="状态"
             >
               {getFieldDecorator('status', {
-                initialValue: this.state.form.status === '' ? 'OPEN' : this.state.form.status,
+                initialValue: this.state.form.status === '' ? 'O' : this.state.form.status,
                 rules: [{
-                  required: true, message: '商户类型不能为空!',
+                  required: true, message: '高度状态不能为空!',
                 }],
               })(
                 <Select>
-                  <Option value="OPEN">上线</Option>
-                  <Option value="CLOSE">下线</Option>
+                  <Option value="O">上线</Option>
+                  <Option value="U">下线</Option>
                 </Select>
               )}
             </Form.Item>

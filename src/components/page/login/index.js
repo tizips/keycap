@@ -65,7 +65,7 @@ class Login extends React.Component {
         window.$cookie.set('Authorization', response.data.result);
 
         setTimeout(function () {
-          window.location.href = '/app/dashboard';
+          window.location.href = '/dashboard';
         }, 2000);
       })
   }

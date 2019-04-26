@@ -101,7 +101,8 @@ window.toUploadFn = (param) => {
 
 window.controls = ['font-size', 'line-height', 'text-color', 'bold', 'italic', 'underline', 'strike-through', 'superscript', 'subscript', 'text-indent', 'link', 'media', 'text-align', 'hr', 'remove-styles'];
 
-window.$upload = 'https://app.panguoyun.com/api/';
+window.$uri = 'https://test.pheilcia.com/api/';
+window.$upload = 'https://test.pheilcia.com/api/';
 
 window.$picture = window.$upload + 'v1/upload/picture';
 
