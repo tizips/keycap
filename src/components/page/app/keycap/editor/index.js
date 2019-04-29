@@ -22,26 +22,23 @@ class KeycapEditor extends Component {
         button: '添加',
       },
       form: {
-        pictures: [],
         name: '',
+        pictures: [],
+        heights: [],
+        areas: [],
+        quarters: [],
+        summary: '',
+        price: '',
+        cause: '',
+        content: '',
         status: '',
         hot: '',
-        summary: '',
         no: 50,
-        content: '',
-        hid: [],
-        aid: [],
-        sid: [],
       },
       other: {
         editor: BraftEditor.createEditorState(null),
         pictures: [],
-        heights: [
-          {
-            hid: 1,
-            name: 'demo',
-          }
-        ],
+        heights: [],
       }
     }
   }
@@ -52,7 +49,7 @@ class KeycapEditor extends Component {
 
       let data = window.urlDecode(this.props.location.search);
 
-      if (data.id === undefined || data.id === '') {
+      if (data.cid === undefined || data.cid === '') {
 
         this.toInit();
         return
@@ -61,7 +58,7 @@ class KeycapEditor extends Component {
       let obj = this.state;
 
       obj.basic.type = 'update';
-      obj.basic.id = data.id;
+      obj.basic.id = data.cid;
       obj.basic.button = '修改';
 
       this.setState(obj, () => {
@@ -71,14 +68,14 @@ class KeycapEditor extends Component {
       this.toInit();
     }
 
-    // this.toGetAreaPro();
+    this.toGetHeightPro();
   }
 
   toFind() {
 
     let self = this;
 
-    window.$http.get('/v1/admins/children/' + this.state.basic.id)
+    window.$http.get('/v1/administer/cap/' + this.state.basic.id)
       .then(function (response) {
         if (!response || response.data.status !== 0) {
           return false;
@@ -86,14 +83,14 @@ class KeycapEditor extends Component {
 
         let obj = self.state;
         obj.form.name = response.data.result.name;
-        obj.form.tel = response.data.result.tel;
-        obj.form.status = response.data.result.status;
+        obj.form.heights = response.data.result.heights;
+        obj.form.areas = response.data.result.areas;
+        obj.form.quarters = response.data.result.quarters;
         obj.form.summary = response.data.result.summary;
         obj.form.content = response.data.result.content;
-        obj.form.position = response.data.result.position;
-        obj.form.lng = response.data.result.lng;
-        obj.form.aid = response.data.result.aid;
-        obj.form.lat = response.data.result.lat;
+        obj.form.status = response.data.result.status;
+        obj.form.hot = response.data.result.hot;
+        obj.form.no = response.data.result.no;
 
         response.data.result.pictures = response.data.result.pictures === null ? [] : response.data.result.pictures;
 
@@ -101,8 +98,9 @@ class KeycapEditor extends Component {
 
           obj.other.pictures.push({
             uid: i,
-            url: response.data.result.pictures[i],
-            thumbUrl: response.data.result.pictures[i],
+            name: response.data.result.pictures[i],
+            url: window.$upload + response.data.result.pictures[i],
+            thumbUrl: window.$upload + response.data.result.pictures[i],
           })
         }
 
@@ -120,7 +118,7 @@ class KeycapEditor extends Component {
 
     if (this.state.basic.type === 'update') {
 
-      // this.toFind();
+      this.toFind();
 
       let obj = this.state;
 
@@ -148,6 +146,7 @@ class KeycapEditor extends Component {
 
     pictures.push({
       uid: pictures.length + 1,
+      name: response.result,
       url: window.$upload + response.result,
       thumbUrl: window.$upload + response.result,
     });
@@ -171,17 +170,21 @@ class KeycapEditor extends Component {
         let obj = this.state;
 
         obj.form.name = values.name;
-        obj.form.tel = values.tel;
+        obj.form.heights = values.heights;
+        obj.form.areas = values.areas;
+        obj.form.quarters = values.quarters;
         obj.form.summary = values.summary;
+        obj.form.price = parseFloat(values.price);
+        obj.form.cause = parseFloat(values.cause);
         obj.form.content = this.state.other.editor.toHTML();
-        obj.form.position = values.position;
         obj.form.status = values.status;
-        obj.form.aid = values.aid;
+        obj.form.hot = values.hot;
+        obj.form.no = values.no;
 
         obj.form.pictures = [];
 
         obj.other.pictures.map(item => {
-          obj.form.pictures.push(item.url);
+          obj.form.pictures.push(item.name);
           return item
         });
 
@@ -198,23 +201,23 @@ class KeycapEditor extends Component {
 
   toCreate() {
     let self = this;
-    window.$http.post('/v1/admins/children', self.state.form)
+    window.$http.post('/v1/administer/cap', self.state.form)
       .then(function (response) {
         if (!response || response.data.status !== 0) {
           return false;
         }
-        window.$message.success("子商户信息添加成功");
+        window.$message.success("商品信息添加成功");
       })
   }
 
   toUpdate() {
     let self = this;
-    window.$http.put('/v1/admins/children/' + self.state.basic.id, self.state.form)
+    window.$http.put('/v1/administer/cap/' + self.state.basic.id, self.state.form)
       .then(function (response) {
         if (!response || response.data.status !== 0) {
           return false;
         }
-        window.$message.success("子商户信息修改成功");
+        window.$message.success("商品信息修改成功");
       })
   }
 
@@ -227,11 +230,11 @@ class KeycapEditor extends Component {
     this.setState(obj)
   };
 
-  toGetAreaPro() {
+  toGetHeightPro() {
 
     let self = this;
 
-    window.$http.get('/v1/admins/area/pro')
+    window.$http.get('/v1/administer/height/pro')
       .then(function (response) {
 
         if (!response || response.data.status !== 0) {
@@ -239,10 +242,10 @@ class KeycapEditor extends Component {
         }
 
         if (response.data.result === null) {
-          window.$message.error("请先设置子商户的所属地区");
+          window.$message.error("请先设置商品的可售高度信息");
 
           setTimeout(function () {
-            self.props.location.history("/app/area")
+            self.props.location.history("/height")
           }, 2000);
 
           return false;
@@ -253,7 +256,7 @@ class KeycapEditor extends Component {
         response.data.result.filter(function (value) {
 
           let item = {};
-          item.aid = value.aid;
+          item.hid = value.hid;
           item.name = value.name;
           item.summary = value.summary;
 
@@ -264,9 +267,7 @@ class KeycapEditor extends Component {
 
         let obj = self.state;
 
-        obj.form.aid = data[0].aid;
-
-        obj.other.areas = data;
+        obj.other.heights = data;
 
         self.setState(obj);
       })
@@ -278,6 +279,9 @@ class KeycapEditor extends Component {
     const props = {
       name: 'file',
       action: window.$picture,
+      headers: {
+        Authorization: window.$cookie.get("Authorization")
+      },
       listType: 'picture',
       defaultFileList: this.state.other.pictures,
       onChange: this.toUpload,
@@ -336,6 +340,8 @@ class KeycapEditor extends Component {
                         initialValue: this.state.form.name,
                         rules: [{
                           required: true, message: '商品名称不能为空',
+                        }, {
+                          max: 60, message: '商品名称最多 60 个字',
                         }],
                       })(
                         <Input autoComplete="off"/>
@@ -344,28 +350,28 @@ class KeycapEditor extends Component {
                     <Form.Item {...window.$layout} label="状态"
                     >
                       {getFieldDecorator('status', {
-                        initialValue: this.state.form.status === '' ? 'OPEN' : this.state.form.status,
+                        initialValue: this.state.form.status === '' ? 'O' : this.state.form.status,
                         rules: [{
                           required: true, message: '商品状态不能为空!',
                         }],
                       })(
                         <Select>
-                          <Option value="OPEN">上线</Option>
-                          <Option value="CLOSE">下线</Option>
+                          <Option value="O">上线</Option>
+                          <Option value="U">下线</Option>
                         </Select>
                       )}
                     </Form.Item>
                     <Form.Item {...window.$layout} label="热卖"
                     >
                       {getFieldDecorator('hot', {
-                        initialValue: this.state.form.hot === '' ? 'OPEN' : this.state.form.status,
+                        initialValue: this.state.form.hot === '' ? 'N' : this.state.form.hot,
                         rules: [{
                           required: true, message: '商户属性不能为空!',
                         }],
                       })(
                         <Select>
-                          <Option value="OPEN">开启</Option>
-                          <Option value="CLOSE">关闭</Option>
+                          <Option value="Y">开启</Option>
+                          <Option value="N">关闭</Option>
                         </Select>
                       )}
                     </Form.Item>
@@ -374,7 +380,7 @@ class KeycapEditor extends Component {
                       {getFieldDecorator('summary', {
                         initialValue: this.state.form.summary,
                         rules: [{
-                          required: true, message: '商户简介不能为空',
+                          max: 255, message: '商户简介最多 255 个字',
                         }],
                       })(
                         <TextArea rows={3} placeholder='请输入商户简介'/>
@@ -383,7 +389,7 @@ class KeycapEditor extends Component {
                     <Form.Item {...window.$layout} label="排序"
                     >
                       {getFieldDecorator('no', {
-                        initialValue: 50,
+                        initialValue: this.state.form.no,
                         rules: [{
                           required: true, message: '商户序号不能为空!',
                         }],
@@ -398,13 +404,13 @@ class KeycapEditor extends Component {
                   <Panel header="可售属性" key="position">
                     <Form.Item {...window.$layout} label="高度"
                     >
-                      {getFieldDecorator('hid', {
-                        initialValue: this.state.form.hid === '' ? '' : this.state.form.hid,
+                      {getFieldDecorator('heights', {
+                        initialValue: this.state.form.heights.length === 0 ? [] : this.state.form.heights,
                         rules: [{
                           required: true, message: '可售高度不能为空!',
                         }],
                       })(
-                        <Select>
+                        <Select mode="multiple">
                           {
                             this.state.other.heights.map((item) => {
                               return (
@@ -417,8 +423,8 @@ class KeycapEditor extends Component {
                     </Form.Item>
                     <Form.Item {...window.$layout} label="分区"
                     >
-                      {getFieldDecorator('aid', {
-                        initialValue: this.state.form.aid === '' ? '' : this.state.form.aid,
+                      {getFieldDecorator('areas', {
+                        initialValue: this.state.form.areas.length === 0 ? [] : this.state.form.areas,
                         rules: [{
                           required: true, message: '可售分区不能为空!',
                         }],
@@ -427,13 +433,14 @@ class KeycapEditor extends Component {
                           <Option key={1} value={1}>字母</Option>
                           <Option key={2} value={2}>功能</Option>
                           <Option key={3} value={3}>数字</Option>
+                          <Option key={4} value={4}>全部</Option>
                         </Select>
                       )}
                     </Form.Item>
                     <Form.Item {...window.$layout} label="刻度"
                     >
-                      {getFieldDecorator('sid', {
-                        initialValue: this.state.form.sid === '' ? '' : this.state.form.sid,
+                      {getFieldDecorator('quarters', {
+                        initialValue: this.state.form.quarters.length === 0 ? [] : this.state.form.quarters,
                         rules: [{
                           required: true, message: '可售刻度不能为空!',
                         }],
@@ -443,6 +450,30 @@ class KeycapEditor extends Component {
                           <Option key={2} value={2}>侧刻</Option>
                           <Option key={3} value={3}>无刻</Option>
                         </Select>
+                      )}
+                    </Form.Item>
+                  </Panel>
+                  <Panel header="商品价格" key="price">
+                    <Form.Item {...window.$layout} label="现价"
+                    >
+                      {getFieldDecorator('price', {
+                        initialValue: this.state.form.price <= 0 ? '' : this.state.form.price,
+                        rules: [{
+                          required: true, message: '商品现价不能为空!',
+                        }],
+                      })(
+                        <Input autoComplete="off"/>
+                      )}
+                    </Form.Item>
+                    <Form.Item {...window.$layout} label="原价"
+                    >
+                      {getFieldDecorator('cause', {
+                        initialValue: this.state.form.cause <= 0 ? '' : this.state.form.cause,
+                        rules: [{
+                          required: true, message: '商品原价不能为空!',
+                        }],
+                      })(
+                        <Input autoComplete="off"/>
                       )}
                     </Form.Item>
                   </Panel>

@@ -107,7 +107,7 @@ class AppHeight extends Component {
     obj.basic.form.show = true;
 
     this.setState(obj, () => {
-      obj.toClearForm();
+      this.toClearForm();
     });
   };
 
@@ -160,8 +160,7 @@ class AppHeight extends Component {
         obj.form.name = values.name;
         obj.form.summary = values.summary;
         obj.form.status = values.status;
-        // obj.form.no = parseInt(values.no);
-        obj.form.no = 0;
+        obj.form.no = parseInt(values.no);
 
         this.setState(obj, () => {
           if (obj.basic.form.type === "update") {
@@ -219,16 +218,16 @@ class AppHeight extends Component {
 
     window.$confirm({
       centered: true,
-      title: '确定要删除该地区 ?',
+      title: '确定要删除该键帽高度信息 ?',
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        window.$http.delete("/v1/admins/area/" + record.aid)
+        window.$http.delete("/v1/administer/height/" + record.hid)
           .then(function (response) {
             if (!response || response.data.status !== 0) {
               return false;
             }
-            window.$message.success("地区信息删除成功");
+            window.$message.success("键帽高度信息删除成功");
             self.toGet();
           })
       },
