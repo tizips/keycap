@@ -87,7 +87,7 @@ class KeycapList extends Component {
           item.key = value.cid;
           item.cid = value.cid;
           item.name = value.name;
-          item.picture = window.$upload + value.picture;
+          item.picture = window.$url + value.picture;
           item.price = parseFloat(value.price);
           item.cause = parseFloat(value.cause);
           item.status = value.status;

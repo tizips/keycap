@@ -24,6 +24,10 @@ export default {
       key: "/admin",
       component: "AppAdmin",
     },
+    {
+      key: "/role",
+      component: "AppRole",
+    },
   ],
   others: [
     // {

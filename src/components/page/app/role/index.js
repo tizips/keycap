@@ -1,12 +1,28 @@
 import React, {Component} from 'react';
-import {Button, Form, Input, Modal, Select, Slider, Table, Tag, Tooltip} from "antd";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  List,
+  Typography,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Slider,
+  Table,
+  Tooltip,
+  Row,
+  Col
+} from "antd";
 import store from "../../../../store";
 import './style.less';
 
 const {TextArea} = Input;
 const {Option} = Select;
+const CheckboxGroup = Checkbox.Group;
 
-class AppAdmin extends Component {
+class AppRole extends Component {
 
   constructor(props) {
     super(props);
@@ -16,10 +32,14 @@ class AppAdmin extends Component {
         width: 0,
         height: 0,
         form: {
-          show: false,
+          show: true,
           type: 'create',
           id: 0,
         },
+        role: {
+          type: '',
+          right: [],
+        }
       },
       data: {
         table: [],
@@ -30,6 +50,9 @@ class AppAdmin extends Component {
         status: '',
         no: 50,
       },
+      other: {
+        role: [],
+      }
     };
   };
 
@@ -41,7 +64,7 @@ class AppAdmin extends Component {
 
     let self = this;
 
-    window.$http.get('/v1/administer/admin')
+    window.$http.get('/v1/administer/role')
       .then(function (response) {
 
         if (!response || response.data.status !== 0 || response.data.result === null) {
@@ -55,12 +78,10 @@ class AppAdmin extends Component {
 
           let item = {};
           item.key = i;
-          item.name_admin = value.name_admin;
-          item.name_role = value.name_role;
-          item.nickname = value.nickname;
-          item.email = value.email;
-          item.editor = value.editor;
-          item.time = value.time;
+          item.name = value.name;
+          item.summary = value.summary;
+          item.time_create = value.time_create;
+          item.time_update = value.time_update;
 
           switch (item.editor) {
             case 'N':
@@ -83,7 +104,8 @@ class AppAdmin extends Component {
               break;
           }
 
-          item.toTime = window.$moment(item.time * 1000).format("MM/DD hh:mm");
+          item.toTimeCreate = window.$moment(item.time_create * 1000).format("MM/DD hh:mm");
+          item.toTimeUpdate = window.$moment(item.time_update * 1000).format("MM/DD hh:mm");
 
           data.push(item);
 
@@ -117,7 +139,7 @@ class AppAdmin extends Component {
 
     obj.form.name = '';
     obj.form.summary = '';
-    obj.form.status = 'OPEN';
+    obj.form.status = 'O';
     obj.form.no = 50;
 
     this.setState(obj);
@@ -256,6 +278,49 @@ class AppAdmin extends Component {
     )
   };
 
+  toOperateRight = () => {
+    console.log('operate', this.state.basic.role)
+
+    let other = [];
+    let i = 0;
+
+    if (this.state.basic.role.right.admin != null) {
+
+      let content = {
+        key: i,
+        name: '管理员',
+        right: [],
+      };
+
+      this.state.basic.role.right.admin.filter(function (item) {
+        i++;
+        let cont = {
+          key: i,
+          name: '',
+          right: '',
+        };
+        if (item === 'admin.watch') {
+          cont.name = '查看';
+          cont.right = item;
+          content.right.push(cont);
+        }
+        return item
+      });
+
+      other.push(content);
+    }
+
+    console.log(other);
+
+    let obj = this.state;
+    obj.other.role = other;
+    this.setState(obj);
+  };
+
+  toRenderRight = (rights) => {
+
+  };
+
   render() {
 
     const {getFieldDecorator} = this.props.form;
@@ -267,31 +332,21 @@ class AppAdmin extends Component {
         key: 'key',
       },
       {
-        title: '昵称',
-        dataIndex: 'nickname',
-        key: 'nickname',
+        title: '名称',
+        dataIndex: 'name',
+        key: 'name',
       }, {
-        title: '登录名',
-        dataIndex: 'name_admin',
-        key: 'name_admin',
+        title: '简介',
+        dataIndex: 'summary',
+        key: 'summary',
       }, {
-        title: '所属分组',
-        dataIndex: 'name_role',
-        key: 'name_role',
+        title: '上次更新时间',
+        key: 'toTimeCreate',
+        dataIndex: 'toTimeCreate',
       }, {
-        title: '邮箱',
-        key: 'email',
-      }, {
-        title: '可编辑',
-        key: 'toEditor',
-        dataIndex: 'toEditor',
-        render: toEditor => (
-          <Tag color={toEditor.color}>{toEditor.blade}</Tag>
-        ),
-      }, {
-        title: '时间',
-        key: 'toTime',
-        dataIndex: 'toTime',
+        title: '添加时间',
+        key: 'toTimeUpdate',
+        dataIndex: 'toTimeUpdate',
       }, {
         title: 'Action',
         key: 'action',
@@ -303,17 +358,6 @@ class AppAdmin extends Component {
       }
     ];
 
-    let obj = this.state;
-
-    obj.basic.height = store.getState().system.height;
-
-    if (obj.basic.height !== store.getState().system.height) {
-
-      obj.basic.height = store.getState().system.height;
-
-      this.setState(obj);
-    }
-
     store.subscribe(() => {
 
       let obj = this.state;
@@ -323,6 +367,16 @@ class AppAdmin extends Component {
         obj.basic.height = store.getState().system.height;
 
         this.setState(obj);
+      }
+
+      if (obj.basic.role !== store.getState().user.role) {
+
+        obj.basic.role = store.getState().user.role;
+
+        console.log('store:', obj.basic)
+        this.setState(obj, () => {
+          this.toOperateRight()
+        });
       }
     });
 
@@ -341,64 +395,77 @@ class AppAdmin extends Component {
         </div>
 
         <Modal
-          title="键帽高度编辑"
+          title="权限组编辑"
           centered
           closable={false}
-          width={400}
+          width={800}
           visible={this.state.basic.form.show}
           maskClosable={false}
           onOk={this.toSubmit}
           onCancel={this.toCloseForm}
         >
           <Form onSubmit={this.toSubmit}>
-            <Form.Item {...window.$layout}
-                       label="名称"
-            >
-              {getFieldDecorator('name', {
-                initialValue: this.state.form.name,
-                rules: [{
-                  required: true, message: '地区名称不能为空',
-                }, {
-                  max: 20, message: '地区名称最多 20 个字'
-                }],
-              })(
-                <Input autoComplete="off"/>
-              )}
-            </Form.Item>
-            <Form.Item {...window.$layout}
-                       label="简介"
-            >
-              {getFieldDecorator('summary', {
-                initialValue: this.state.form.summary,
-                rules: [{
-                  max: 240, message: '地区简介最多 240 个字',
-                }],
-              })(
-                <TextArea rows={3}/>
-              )}
-            </Form.Item>
-            <Form.Item {...window.$layout} label="状态"
-            >
-              {getFieldDecorator('status', {
-                initialValue: this.state.form.status === '' ? 'OPEN' : this.state.form.status,
-                rules: [{
-                  required: true, message: '商户类型不能为空!',
-                }],
-              })(
-                <Select>
-                  <Option value="OPEN">上线</Option>
-                  <Option value="CLOSE">下线</Option>
-                </Select>
-              )}
-            </Form.Item>
-            <Form.Item {...window.$layout} label="排序"
-            >
-              {getFieldDecorator('no', {
-                initialValue: this.state.form.no,
-              })(
-                <Slider min={1} max={99}/>
-              )}
-            </Form.Item>
+            <Row>
+              <Col span={10}>
+                <Form.Item {...window.$layout}
+                           label="名称"
+                >
+                  {getFieldDecorator('name', {
+                    initialValue: this.state.form.name,
+                    rules: [{
+                      required: true, message: '权限组名称不能为空',
+                    }, {
+                      max: 20, message: '权限组名称最多 20 个字'
+                    }],
+                  })(
+                    <Input autoComplete="off"/>
+                  )}
+                </Form.Item>
+                <Form.Item {...window.$layout}
+                           label="简介"
+                >
+                  {getFieldDecorator('summary', {
+                    initialValue: this.state.form.summary,
+                    rules: [{
+                      max: 240, message: '权限组简介最多 240 个字',
+                    }],
+                  })(
+                    <TextArea rows={3}/>
+                  )}
+                </Form.Item>
+                <Form.Item {...window.$layout}
+                           label="我的"
+                >
+                  {getFieldDecorator('roleType', {
+                    initialValue: this.state.basic.role.type,
+                  })(
+                    <Input autoComplete="off" disabled/>
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={1}><Divider className="role-divider" type="vertical"/></Col>
+              <Col span={13}>
+                <Form.Item {...window.$layout}
+                >
+                  <Checkbox
+                  >
+                    Check all
+                  </Checkbox>
+                </Form.Item>
+                <Form.Item {...window.$layout} >
+                  {
+                    this.state.other.role.map((item) => {
+
+                      this.toRenderRight(item);
+                      
+                      return (
+                        <span key={item.key}>{item.name}：</span>
+                      );
+                    })
+                  }
+                </Form.Item>
+              </Col>
+            </Row>
           </Form>
         </Modal>
       </div>
@@ -406,6 +473,6 @@ class AppAdmin extends Component {
   }
 }
 
-AppAdmin = Form.create()(AppAdmin);
+AppRole = Form.create()(AppRole);
 
-export default AppAdmin;
+export default AppRole;

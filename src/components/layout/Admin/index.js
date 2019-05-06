@@ -135,9 +135,8 @@ class Admin extends Component {
   };
 
   toClickMenu = e => {
-    if (e.key === 'merchant') {
-      // this.toChangMerchant();
-    }
+    // if (e.key === 'merchant') {
+    // }
   };
 
   toFindAdmin() {
@@ -157,17 +156,27 @@ class Admin extends Component {
 
         let obj = self.state;
 
+        obj.user.name = response.data.result.name;
         obj.user.nickname = response.data.result.nickname;
-        obj.user.thumb = window.$uri + response.data.result.thumb;
+        obj.user.thumb = window.$url + response.data.result.thumb;
         obj.role.type = response.data.result.role.type;
         obj.role.right = response.data.result.role.right;
-        // obj.merchant.name = response.data.result.merchant.name;
-        // obj.merchant.type = response.data.result.merchant.type;
+
+        let user = {
+          basic: {
+            name: obj.user.name,
+            nickname: obj.user.nickname,
+            thumb: obj.user.thumb,
+          },
+          role: {
+            type: obj.role.type,
+            right: obj.role.right,
+          },
+        };
 
         self.setState(obj);
         self.toOperateMenus();
-
-        store.dispatch(UpdateUserInfo(response.data.result));
+        store.dispatch(UpdateUserInfo(user));
       })
   };
 
@@ -188,7 +197,7 @@ class Admin extends Component {
     menus.push({
       title: '键帽管理',
       key: '/keycap',
-      icon: 'compass',
+      icon: 'ordered-list',
     });
 
     if (this.state.role.right.height !== null) {
@@ -196,7 +205,7 @@ class Admin extends Component {
       menus.push({
         title: '键帽高度',
         key: '/height',
-        icon: 'compass',
+        icon: 'stock',
       });
     }
 
@@ -205,7 +214,16 @@ class Admin extends Component {
       menus.push({
         title: '管理员',
         key: '/admin',
-        icon: 'compass',
+        icon: 'user',
+      });
+    }
+
+    if (this.state.role.right.role !== null) {
+
+      menus.push({
+        title: '权限组',
+        key: '/role',
+        icon: 'tags',
       });
     }
 

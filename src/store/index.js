@@ -8,11 +8,8 @@ const systemInfo = {
 const userInfo = {
   basic: {
     name: '',
+    nickname: '',
     thumb: '',
-  },
-  merchant: {
-    type: '',
-    name: '',
   },
   role: {
     type: '',
@@ -60,9 +57,7 @@ const loadingReducer = function (state = loadingInfo, action) {
 const userReducer = function (state = userInfo, action) {
   switch (action.type) {
     case 'UPDATE_USER_INFO': {
-      return {
-        user: action.payload,
-      }
+      return action.payload
     }
     default: {
       return state;
@@ -93,7 +88,7 @@ export function UpdateLoadingHttp(ok) {
 
 export function UpdateUserInfo(user) {
   return {
-    type: 'userReducer',
+    type: 'UPDATE_USER_INFO',
     payload: user,
   }
 }

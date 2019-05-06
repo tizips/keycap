@@ -96,16 +96,17 @@ window.toUploadFn = (param) => {
 
   fd.append('file', param.file);
   xhr.open('POST', uri, true);
-  xhr.setRequestHeader("Authorization",window.$cookie.get("Authorization"));
+  xhr.setRequestHeader("Authorization", window.$cookie.get("Authorization"));
   xhr.send(fd);
 };
 
 window.controls = ['font-size', 'line-height', 'text-color', 'bold', 'italic', 'underline', 'strike-through', 'superscript', 'subscript', 'text-indent', 'link', 'media', 'text-align', 'hr', 'remove-styles'];
 
-window.$uri = 'https://test.pheilcia.com/api/';
-window.$upload = 'https://test.pheilcia.com/api/';
+window.$url = 'https://test.pheilcia.com/';
+window.$uri = window.$url + '/api/';
+// window.$upload = window.$uri + '/api/';
 
-window.$picture = window.$upload + 'v1/administer/upload';
+window.$picture = window.$uri + 'v1/administer/upload';
 
 window.$layout = {
   labelCol: {span: 5},

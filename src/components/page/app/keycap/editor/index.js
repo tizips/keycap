@@ -99,8 +99,8 @@ class KeycapEditor extends Component {
           obj.other.pictures.push({
             uid: i,
             name: response.data.result.pictures[i],
-            url: window.$upload + response.data.result.pictures[i],
-            thumbUrl: window.$upload + response.data.result.pictures[i],
+            url: window.$url + response.data.result.pictures[i],
+            thumbUrl: window.$url + response.data.result.pictures[i],
           })
         }
 
@@ -147,8 +147,8 @@ class KeycapEditor extends Component {
     pictures.push({
       uid: pictures.length + 1,
       name: response.result,
-      url: window.$upload + response.result,
-      thumbUrl: window.$upload + response.result,
+      url: window.$url + response.result,
+      thumbUrl: window.$url + response.result,
     });
 
     let obj = this.state;
