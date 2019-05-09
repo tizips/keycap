@@ -6,7 +6,7 @@ import './style.less';
 const {TextArea} = Input;
 const {Option} = Select;
 
-class AppHeight extends Component {
+class AppType extends Component {
 
   constructor(props) {
     super(props);
@@ -41,7 +41,7 @@ class AppHeight extends Component {
 
     let self = this;
 
-    window.$http.get('/v1/administer/height')
+    window.$http.get('/v1/administer/type')
       .then(function (response) {
 
         if (!response || response.data.status !== 0 || response.data.result === null) {
@@ -55,7 +55,7 @@ class AppHeight extends Component {
 
           let item = {};
           item.key = i;
-          item.hid = value.hid;
+          item.tid = value.tid;
           item.name = value.name;
           item.summary = value.summary;
           item.no = value.no;
@@ -129,7 +129,7 @@ class AppHeight extends Component {
 
     obj.basic.form.show = true;
     obj.basic.form.type = 'update';
-    obj.basic.form.id = record.hid;
+    obj.basic.form.id = record.tid;
 
     obj.form.name = record.name;
     obj.form.summary = record.summary;
@@ -176,7 +176,7 @@ class AppHeight extends Component {
   toCreate() {
 
     let self = this;
-    window.$http.post('/v1/administer/height', self.state.form)
+    window.$http.post('/v1/administer/type', self.state.form)
       .then(function (response) {
         if (!response || response.data.status !== 0) {
           return false;
@@ -195,7 +195,7 @@ class AppHeight extends Component {
 
   toUpdate() {
     let self = this;
-    window.$http.put('/v1/administer/height/' + self.state.basic.form.id, self.state.form)
+    window.$http.put('/v1/administer/type/' + self.state.basic.form.id, self.state.form)
       .then(function (response) {
         if (!response || response.data.status !== 0) {
           return false;
@@ -222,7 +222,7 @@ class AppHeight extends Component {
       okText: '确认',
       cancelText: '取消',
       onOk() {
-        window.$http.delete("/v1/administer/height/" + record.hid)
+        window.$http.delete("/v1/administer/type/" + record.tid)
           .then(function (response) {
             if (!response || response.data.status !== 0) {
               return false;
@@ -392,6 +392,6 @@ class AppHeight extends Component {
   }
 }
 
-AppHeight = Form.create()(AppHeight);
+AppType = Form.create()(AppType);
 
-export default AppHeight;
+export default AppType;

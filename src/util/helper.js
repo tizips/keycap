@@ -100,7 +100,7 @@ window.toUploadFn = (param) => {
   xhr.send(fd);
 };
 
-window.controls = ['font-size', 'line-height', 'text-color', 'bold', 'italic', 'underline', 'strike-through', 'superscript', 'subscript', 'text-indent', 'link', 'media', 'text-align', 'hr', 'remove-styles'];
+window.controls = ['font-size', 'line-type', 'text-color', 'bold', 'italic', 'underline', 'strike-through', 'superscript', 'subscript', 'text-indent', 'link', 'media', 'text-align', 'hr', 'remove-styles'];
 
 window.$url = 'https://test.pheilcia.com/';
 window.$uri = window.$url + '/api/';

@@ -17,8 +17,12 @@ export default {
       component: 'KeycapEditor',
     },
     {
-      key: "/height",
-      component: "AppHeight",
+      key: "/type",
+      component: "AppType",
+    },
+    {
+      key: "/area",
+      component: "AppArea",
     },
     {
       key: "/admin",
